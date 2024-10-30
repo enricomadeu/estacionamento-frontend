@@ -16,9 +16,11 @@ import { toast } from "sonner";
 import { EstacionamentoForm } from "@/components/estacionamento-form/estacionamento-form";
 import { FuncionarioForm } from "@/components/funcionario-form/funcionario-form";
 import { EntradaSaidaListagem } from "@/components/entrada-saida-listagem/entrada-saida-listagem";
+import { useNavigate } from "react-router-dom";
 
 export const Dashboard = () => {
 	const { funcionario } = useAuth();
+	const navigate = useNavigate();
 	const [cargos, setCargos] = useState<CargoResponse[]>([]);
 	const [estacionamentos, setEstacionamentos] = useState<
 		EstacionamentoResponse[]
@@ -28,6 +30,10 @@ export const Dashboard = () => {
 	const [funcionarios, setFuncionarios] = useState<FuncionarioResponse[]>([]);
 
 	useEffect(() => {
+		if (!funcionario) {
+			navigate("/home");
+			return;
+		}
 		switch (funcionario?.cargo.id) {
 			case CargoEnum.Gerente:
 				setEstacionamentoSelecionado(funcionario.estacionamento);

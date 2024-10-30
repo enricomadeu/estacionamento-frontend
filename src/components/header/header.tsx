@@ -2,15 +2,13 @@ import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "@/components/modeToggle/mode-toggle";
 import { useAuth } from "@/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
 	const { funcionario } = useAuth();
-	const navigate = useNavigate();
 
 	const onLogout = () => {
 		localStorage.removeItem("funcionario");
-		navigate("/home");
+		window.location.reload();
 	};
 
 	return (

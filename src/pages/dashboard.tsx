@@ -86,7 +86,6 @@ export const Dashboard = () => {
 		);
 	};
 
-	console.log(funcionario);
 	return (
 		<div className="flex-1 space-y-6 w-full h-screen p-8 mt-[7rem]">
 			<div className="flex justify-between">

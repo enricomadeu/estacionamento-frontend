@@ -11,7 +11,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FuncionarioLoginRequest } from "@/api/funcionario/requests/funcionarioLogin.request";
 import { loginFuncionario } from "@/api/funcionario/funcionario.service";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,12 @@ export const Home = () => {
 	const [senha, setSenha] = useState("");
 	const { setFuncionario } = useAuth();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (localStorage.getItem("funcionario")) {
+			navigate("/dashboard");
+		}
+	}, []);
 
 	const onPlateSubmit = () => {
 		console.log(placa);

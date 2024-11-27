@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -9,26 +8,26 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { EntradaSaidaResponse } from "@/api/entradaSaida/responses/entradaSaida.response";
-import { getEntradasSaidasEstacionamentos } from "@/api/entradaSaida/entradaSaida.service";
+import { EntradaSaidaForm } from "@/components/entrada-saida-form/entrada-saida-form";
+import { format } from "date-fns";
 
 interface EntradaSaidaListagemProps {
-	estacionamentoId: number;
+	entradasSaidas: EntradaSaidaResponse[];
+	onBuscarEntradasSaidas: () => void;
 }
 
-export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
-	const { estacionamentoId } = props;
-	const [entradasSaidas, setEntradasSaidas] = useState<EntradaSaidaResponse[]>(
-		[]
+const calculaPagamento = (data_entrada: Date, valor_hora: number) => {
+	const now = new Date();
+	const diffInHours = Math.ceil(
+		(now.getTime() - data_entrada.getTime()) / (1000 * 60 * 60)
 	);
+	const valor_a_pagar = valor_hora * diffInHours;
 
-	useEffect(() => {
-		buscarEntradasSaidas();
-	}, []);
+	return valor_a_pagar;
+};
 
-	const buscarEntradasSaidas = async () => {
-		const response = await getEntradasSaidasEstacionamentos(estacionamentoId);
-		setEntradasSaidas(response.data);
-	};
+export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
+	const { entradasSaidas, onBuscarEntradasSaidas } = props;
 
 	return (
 		<Table className="w-full">
@@ -41,10 +40,15 @@ export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
 				<TableRow>
 					<TableHead>ID</TableHead>
 					<TableHead>Placa</TableHead>
-					<TableHead>Entrada</TableHead>
-					<TableHead>Saida</TableHead>
+					<TableHead className="cellphone:hidden tablet:table-cell">
+						Entrada
+					</TableHead>
+					<TableHead className="cellphone:hidden tablet:table-cell">
+						Saida
+					</TableHead>
 					<TableHead>Valor</TableHead>
 					<TableHead>Pago</TableHead>
+					<TableHead>Ações</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -52,12 +56,43 @@ export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
 					<TableRow key={entradaSaida.id}>
 						<TableCell>{entradaSaida.id}</TableCell>
 						<TableCell>{entradaSaida.placa}</TableCell>
-						<TableCell>{entradaSaida.dataEntrada.toDateString()}</TableCell>
-						<TableCell>
-							{entradaSaida.dataSaida?.toDateString() || "-"}
+						<TableCell className="cellphone:hidden tablet:table-cell">
+							{format(entradaSaida.data_entrada, "dd/MM/yyyy - HH:mm")}
 						</TableCell>
-						<TableCell>{entradaSaida.valorPago}</TableCell>
+						<TableCell className="cellphone:hidden tablet:table-cell">
+							{entradaSaida.data_saida
+								? format(entradaSaida.data_saida, "dd/MM/yyyy - HH:mm")
+								: "-"}
+						</TableCell>
+						<TableCell>
+							{entradaSaida.valor_pago
+								? entradaSaida.valor_pago.toLocaleString("pt-BR", {
+										style: "currency",
+										currency: "BRL",
+								  })
+								: calculaPagamento(
+										new Date(entradaSaida.data_entrada),
+										entradaSaida.estacionamento.valor_hora
+								  ).toLocaleString("pt-BR", {
+										style: "currency",
+										currency: "BRL",
+								  })}
+						</TableCell>
 						<TableCell>{entradaSaida.pago ? "Sim" : "Não"}</TableCell>
+						<TableCell>
+							<EntradaSaidaForm
+								entradaSaida={entradaSaida}
+								valor={
+									entradaSaida.valor_pago
+										? entradaSaida.valor_pago
+										: calculaPagamento(
+												new Date(entradaSaida.data_entrada),
+												entradaSaida.estacionamento.valor_hora
+										  )
+								}
+								buscarEntradasSaidas={onBuscarEntradasSaidas}
+							/>
+						</TableCell>
 					</TableRow>
 				))}
 			</TableBody>

@@ -4,18 +4,18 @@ export class EntradaSaidaResponse {
 	id: number;
 	placa: string;
 	estacionamento: EstacionamentoResponse;
-	dataEntrada: Date;
-	dataSaida?: Date;
-	valorPago?: number;
+	data_entrada: Date;
+	data_saida?: Date;
+	valor_pago?: number;
 	pago: boolean;
 
 	constructor(params: EntradaSaidaResponse) {
 		this.id = params.id;
 		this.placa = params.placa;
 		this.estacionamento = params.estacionamento;
-		this.dataEntrada = params.dataEntrada;
-		this.dataSaida = params.dataSaida;
-		this.valorPago = params.valorPago;
+		this.data_entrada = params.data_entrada;
+		this.data_saida = params.data_saida;
+		this.valor_pago = params.valor_pago;
 		this.pago = params.pago;
 	}
 }

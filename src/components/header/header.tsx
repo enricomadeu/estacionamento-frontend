@@ -7,7 +7,7 @@ export const Header = () => {
 	const { funcionario } = useAuth();
 
 	const onLogout = () => {
-		localStorage.removeItem("funcionario");
+		localStorage.clear();
 		window.location.reload();
 	};
 

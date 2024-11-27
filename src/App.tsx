@@ -10,6 +10,7 @@ import { AuthProvider } from "@/AuthContext";
 import { Home } from "@/pages/home";
 import { Header } from "@/components/header/header";
 import { Dashboard } from "@/pages/dashboard";
+import { ResultadoPlaca } from "@/pages/resultado-placa";
 import { ProtectedRoute } from "@/ProtectedRoute";
 
 export function App() {
@@ -26,6 +27,7 @@ export function App() {
 								path="/dashboard"
 								element={<ProtectedRoute element={<Dashboard />} />}
 							></Route>
+							<Route path="/placa" element={<ResultadoPlaca />}></Route>
 						</Routes>
 					</Router>
 				</div>

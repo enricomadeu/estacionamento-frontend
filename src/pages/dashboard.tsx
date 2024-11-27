@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useAuth } from "@/AuthContext";
 import { CargoEnum } from "@/api/cargo/enums/cargo.enum";
 import { getEstacionamentos } from "@/api/estacionamento/estacionamento.service";
@@ -16,7 +16,9 @@ import { toast } from "sonner";
 import { EstacionamentoForm } from "@/components/estacionamento-form/estacionamento-form";
 import { FuncionarioForm } from "@/components/funcionario-form/funcionario-form";
 import { EntradaSaidaListagem } from "@/components/entrada-saida-listagem/entrada-saida-listagem";
+import { EntradaSaidaResponse } from "@/api/entradaSaida/responses/entradaSaida.response";
 import { useNavigate } from "react-router-dom";
+import { getEntradasSaidasEstacionamentos } from "@/api/entradaSaida/entradaSaida.service";
 
 export const Dashboard = () => {
 	const { funcionario } = useAuth();
@@ -28,21 +30,37 @@ export const Dashboard = () => {
 	const [estacionamentoSelecionado, setEstacionamentoSelecionado] =
 		useState<EstacionamentoResponse>();
 	const [funcionarios, setFuncionarios] = useState<FuncionarioResponse[]>([]);
+	const [entradasSaidas, setEntradasSaidas] = useState<EntradaSaidaResponse[]>(
+		[]
+	);
+	const [activeTab, setActiveTab] = useState<string>(() => {
+		return localStorage.getItem("activeTab") || "";
+	});
 
 	useEffect(() => {
 		if (!funcionario) {
 			navigate("/home");
 			return;
 		}
+		const savedEstacionamento = localStorage.getItem(
+			"estacionamentoSelecionado"
+		);
 		switch (funcionario?.cargo.id) {
 			case CargoEnum.Gerente:
 				setEstacionamentoSelecionado(funcionario.estacionamento);
 				buscarFuncionarios(funcionario.estacionamento.id);
+				buscarEntradasSaidas(funcionario.estacionamento.id);
 				break;
 			case CargoEnum.Atendente:
 				setEstacionamentoSelecionado(funcionario.estacionamento);
+				buscarEntradasSaidas(funcionario.estacionamento.id);
 				break;
 			case CargoEnum.Administrador:
+				if (savedEstacionamento) {
+					setEstacionamentoSelecionado(JSON.parse(savedEstacionamento));
+					buscarFuncionarios(JSON.parse(savedEstacionamento).id);
+					buscarEntradasSaidas(JSON.parse(savedEstacionamento).id);
+				}
 				buscarEstacionamentos();
 				break;
 			default:
@@ -50,6 +68,19 @@ export const Dashboard = () => {
 		}
 		buscarCargos();
 	}, []);
+
+	useEffect(() => {
+		if (estacionamentoSelecionado) {
+			localStorage.setItem(
+				"estacionamentoSelecionado",
+				JSON.stringify(estacionamentoSelecionado)
+			);
+		}
+	}, [estacionamentoSelecionado]);
+
+	useEffect(() => {
+		localStorage.setItem("activeTab", activeTab);
+	}, [activeTab]);
 
 	const buscarEstacionamentos = async () => {
 		try {
@@ -80,9 +111,15 @@ export const Dashboard = () => {
 		}
 	};
 
+	const buscarEntradasSaidas = async (id: number) => {
+		const response = await getEntradasSaidasEstacionamentos(id);
+		setEntradasSaidas(response.data);
+	};
+
 	const handleEstacionamentoSelecionado = (id: number) => {
 		setEstacionamentoSelecionado(estacionamentos.find((e) => e.id === id));
 		buscarFuncionarios(id);
+		buscarEntradasSaidas(id);
 	};
 
 	const verificarAdministradorOuGerente = () => {
@@ -139,7 +176,14 @@ export const Dashboard = () => {
 					<Tabs
 						className="w-full"
 						defaultValue={
-							verificarAdministradorOuGerente() ? "funcionarios" : "historico"
+							activeTab?.length > 0
+								? activeTab
+								: verificarAdministradorOuGerente()
+								? "funcionarios"
+								: "historico"
+						}
+						onClick={(value: BaseSyntheticEvent) =>
+							setActiveTab(value.target.accessKey)
 						}
 					>
 						<TabsList
@@ -150,9 +194,13 @@ export const Dashboard = () => {
 							}`}
 						>
 							{verificarAdministradorOuGerente() && (
-								<TabsTrigger value="funcionarios">Funcionários</TabsTrigger>
+								<TabsTrigger accessKey="funcionarios" value="funcionarios">
+									Funcionários
+								</TabsTrigger>
 							)}
-							<TabsTrigger value="historico">Histórico</TabsTrigger>
+							<TabsTrigger accessKey="historico" value="historico">
+								Histórico
+							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="funcionarios">
 							<FuncionariosListagem
@@ -166,7 +214,10 @@ export const Dashboard = () => {
 						</TabsContent>
 						<TabsContent value="historico">
 							<EntradaSaidaListagem
-								estacionamentoId={estacionamentoSelecionado.id}
+								entradasSaidas={entradasSaidas}
+								onBuscarEntradasSaidas={() =>
+									buscarEntradasSaidas(estacionamentoSelecionado.id)
+								}
 							/>
 						</TabsContent>
 					</Tabs>

@@ -12,3 +12,11 @@ export const getEntradasSaidasEstacionamentos = async (
 		`entradas-saidas/estacionamento/${idEstacionamento}`
 	);
 };
+
+export const getEntradasSaidasPlaca = async (placa: string) => {
+	return api.get<EntradaSaidaResponse[]>(`entradas-saidas/placa/${placa}`);
+};
+
+export const confirmarPagamento = async (placa: string) => {
+	return api.put(`/entradas-saidas/placa/${placa}/pagamento`);
+};

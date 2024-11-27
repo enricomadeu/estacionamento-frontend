@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,11 +17,13 @@ import { FuncionarioLoginRequest } from "@/api/funcionario/requests/funcionarioL
 import { loginFuncionario } from "@/api/funcionario/funcionario.service";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/AuthContext";
+import { getEntradasSaidasPlaca } from "@/api/entradaSaida/entradaSaida.service";
 
 export const Home = () => {
 	const [placa, setPlaca] = useState("");
 	const [nome, setNome] = useState("");
 	const [senha, setSenha] = useState("");
+	const [loading, setLoading] = useState(false);
 	const { setFuncionario } = useAuth();
 	const navigate = useNavigate();
 
@@ -30,11 +33,25 @@ export const Home = () => {
 		}
 	}, []);
 
-	const onPlateSubmit = () => {
-		console.log(placa);
+	const onPlateSubmit = async () => {
+		setLoading(true);
+		try {
+			await getEntradasSaidasPlaca(placa);
+			toast.success("Login realizado com sucesso!", {
+				className: "bg-green-600 text-white",
+			});
+			navigate(`/placa?placa=${placa}`);
+		} catch {
+			toast.error("Placa não encontrada!", {
+				className: "bg-red-500 text-white",
+			});
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const onLoginSubmit = async () => {
+		setLoading(true);
 		try {
 			const request = new FuncionarioLoginRequest({ nome, senha });
 			const funcionario = await loginFuncionario(request);
@@ -47,6 +64,8 @@ export const Home = () => {
 			toast.error("Credenciais inválidas!", {
 				className: "bg-red-500 text-white",
 			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -78,7 +97,10 @@ export const Home = () => {
 							</div>
 						</CardContent>
 						<CardFooter>
-							<Button onClick={onPlateSubmit}>Buscar</Button>
+							<Button disabled={loading} onClick={onPlateSubmit}>
+								{loading && <Loader2 className="animate-spin" />}
+								Buscar
+							</Button>
 						</CardFooter>
 					</Card>
 				</TabsContent>
@@ -114,7 +136,10 @@ export const Home = () => {
 							</div>
 						</CardContent>
 						<CardFooter>
-							<Button onClick={onLoginSubmit}>Login</Button>
+							<Button disabled={loading} onClick={onLoginSubmit}>
+								{loading && <Loader2 className="animate-spin" />}
+								Login
+							</Button>
 						</CardFooter>
 					</Card>
 				</TabsContent>

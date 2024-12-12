@@ -126,6 +126,7 @@ export const Dashboard = () => {
 	const buscarMensalidades = async (id: number) => {
 		const response = await getMensalidadesEstacionamento(id);
 		setMensalidades(response.data);
+		console.log(mensalidades);
 	};
 
 	const handleEstacionamentoSelecionado = (id: number) => {

@@ -5,6 +5,7 @@ export class EstacionamentoResponse {
 	telefone: string;
 	vagas: number;
 	valor_hora: number;
+	valor_mensalidade: number;
 	ativo: boolean;
 	constructor(params: EstacionamentoResponse) {
 		this.id = params.id;
@@ -13,6 +14,7 @@ export class EstacionamentoResponse {
 		this.telefone = params.telefone;
 		this.vagas = params.vagas;
 		this.valor_hora = params.valor_hora;
+		this.valor_mensalidade = params.valor_mensalidade;
 		this.ativo = params.ativo;
 	}
 }

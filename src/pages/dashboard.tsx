@@ -19,6 +19,9 @@ import { EntradaSaidaListagem } from "@/components/entrada-saida-listagem/entrad
 import { EntradaSaidaResponse } from "@/api/entradaSaida/responses/entradaSaida.response";
 import { useNavigate } from "react-router-dom";
 import { getEntradasSaidasEstacionamentos } from "@/api/entradaSaida/entradaSaida.service";
+import { getMensalidadesEstacionamento } from "@/api/mensalidade/mensalidade.service";
+import { MensalidadeResponse } from "@/api/mensalidade/responses/mensalidade.response";
+import { MensalidadeForm } from "@/components/mensalidade-form/mensalidade-form";
 
 export const Dashboard = () => {
 	const { funcionario } = useAuth();
@@ -33,6 +36,7 @@ export const Dashboard = () => {
 	const [entradasSaidas, setEntradasSaidas] = useState<EntradaSaidaResponse[]>(
 		[]
 	);
+	const [mensalidades, setMensalidades] = useState<MensalidadeResponse[]>([]);
 	const [activeTab, setActiveTab] = useState<string>(() => {
 		return localStorage.getItem("activeTab") || "";
 	});
@@ -50,16 +54,19 @@ export const Dashboard = () => {
 				setEstacionamentoSelecionado(funcionario.estacionamento);
 				buscarFuncionarios(funcionario.estacionamento.id);
 				buscarEntradasSaidas(funcionario.estacionamento.id);
+				buscarMensalidades(funcionario.estacionamento.id);
 				break;
 			case CargoEnum.Atendente:
 				setEstacionamentoSelecionado(funcionario.estacionamento);
 				buscarEntradasSaidas(funcionario.estacionamento.id);
+				buscarMensalidades(funcionario.estacionamento.id);
 				break;
 			case CargoEnum.Administrador:
 				if (savedEstacionamento) {
 					setEstacionamentoSelecionado(JSON.parse(savedEstacionamento));
 					buscarFuncionarios(JSON.parse(savedEstacionamento).id);
 					buscarEntradasSaidas(JSON.parse(savedEstacionamento).id);
+					buscarMensalidades(JSON.parse(savedEstacionamento).id);
 				}
 				buscarEstacionamentos();
 				break;
@@ -67,7 +74,7 @@ export const Dashboard = () => {
 				break;
 		}
 		buscarCargos();
-	}, []);
+	}, [funcionario, navigate]);
 
 	useEffect(() => {
 		if (estacionamentoSelecionado) {
@@ -116,6 +123,11 @@ export const Dashboard = () => {
 		setEntradasSaidas(response.data);
 	};
 
+	const buscarMensalidades = async (id: number) => {
+		const response = await getMensalidadesEstacionamento(id);
+		setMensalidades(response.data);
+	};
+
 	const handleEstacionamentoSelecionado = (id: number) => {
 		setEstacionamentoSelecionado(estacionamentos.find((e) => e.id === id));
 		buscarFuncionarios(id);
@@ -135,22 +147,25 @@ export const Dashboard = () => {
 				<h2 className="text-3xl tracking-tight">
 					<span className="font-bold">Dashboard</span>
 				</h2>
-				{funcionario?.cargo.id !== CargoEnum.Atendente && (
-					<>
-						{estacionamentoSelecionado ? (
-							<FuncionarioForm
-								estacionamentoId={estacionamentoSelecionado.id}
-								cargos={cargos}
-								onBuscarFuncionarios={() =>
-									buscarFuncionarios(estacionamentoSelecionado.id)
-								}
-							/>
-						) : (
-							<EstacionamentoForm
-								onBuscarEstacionamentos={buscarEstacionamentos}
-							/>
-						)}
-					</>
+				{!estacionamentoSelecionado && verificarAdministradorOuGerente() && (
+					<EstacionamentoForm onBuscarEstacionamentos={buscarEstacionamentos} />
+				)}
+				{estacionamentoSelecionado &&
+					verificarAdministradorOuGerente() &&
+					activeTab === "funcionarios" && (
+						<FuncionarioForm
+							estacionamentoId={estacionamentoSelecionado.id}
+							cargos={cargos}
+							onBuscarFuncionarios={() =>
+								buscarFuncionarios(estacionamentoSelecionado.id)
+							}
+						/>
+					)}
+				{estacionamentoSelecionado && activeTab === "mensalidades" && (
+					<MensalidadeForm
+						estacionamento={estacionamentoSelecionado}
+						onBuscarMensalidades={buscarMensalidades}
+					/>
 				)}
 			</div>
 			{estacionamentoSelecionado && (
@@ -189,8 +204,8 @@ export const Dashboard = () => {
 						<TabsList
 							className={`grid w-full ${
 								verificarAdministradorOuGerente()
-									? "grid-cols-2"
-									: "grid-cols-1"
+									? "grid-cols-3"
+									: "grid-cols-2"
 							}`}
 						>
 							{verificarAdministradorOuGerente() && (
@@ -200,6 +215,9 @@ export const Dashboard = () => {
 							)}
 							<TabsTrigger accessKey="historico" value="historico">
 								Histórico
+							</TabsTrigger>
+							<TabsTrigger accessKey="mensalidades" value="mensalidades">
+								Mensalidades
 							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="funcionarios">

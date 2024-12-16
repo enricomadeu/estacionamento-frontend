@@ -18,11 +18,16 @@ import { FuncionarioForm } from "@/components/funcionario-form/funcionario-form"
 import { EntradaSaidaListagem } from "@/components/entrada-saida-listagem/entrada-saida-listagem";
 import { EntradaSaidaResponse } from "@/api/entradaSaida/responses/entradaSaida.response";
 import { useNavigate } from "react-router-dom";
-import { getEntradasSaidasEstacionamentos } from "@/api/entradaSaida/entradaSaida.service";
+import {
+	getEntradaSaidaRelatorio,
+	getEntradasSaidasEstacionamentos,
+} from "@/api/entradaSaida/entradaSaida.service";
 import { getMensalidadesEstacionamento } from "@/api/mensalidade/mensalidade.service";
 import { MensalidadeResponse } from "@/api/mensalidade/responses/mensalidade.response";
 import { MensalidadeForm } from "@/components/mensalidade-form/mensalidade-form";
 import { MensalidadeListagem } from "@/components/mensalidade-listagem/mensalidade-listagem";
+import { EntradaSaidaRelatorioResponse } from "@/api/entradaSaida/responses/entradaSaidaRelatorio.response";
+import { Relatorios } from "@/components/relatorios/relatorios";
 
 export const Dashboard = () => {
 	const { funcionario } = useAuth();
@@ -38,6 +43,9 @@ export const Dashboard = () => {
 		[]
 	);
 	const [mensalidades, setMensalidades] = useState<MensalidadeResponse[]>([]);
+	const [entradaSaidaRelatorio, setEntradaSaidaRelatorio] = useState<
+		EntradaSaidaRelatorioResponse[]
+	>([]);
 	const [activeTab, setActiveTab] = useState<string>(() => {
 		return localStorage.getItem("activeTab") || "";
 	});
@@ -56,6 +64,7 @@ export const Dashboard = () => {
 				buscarFuncionarios(funcionario.estacionamento.id);
 				buscarEntradasSaidas(funcionario.estacionamento.id);
 				buscarMensalidades(funcionario.estacionamento.id);
+				buscarEntradaSaidaRelatorio(funcionario.estacionamento.id);
 				break;
 			case CargoEnum.Atendente:
 				setEstacionamentoSelecionado(funcionario.estacionamento);
@@ -68,6 +77,7 @@ export const Dashboard = () => {
 					buscarFuncionarios(JSON.parse(savedEstacionamento).id);
 					buscarEntradasSaidas(JSON.parse(savedEstacionamento).id);
 					buscarMensalidades(JSON.parse(savedEstacionamento).id);
+					buscarEntradaSaidaRelatorio(JSON.parse(savedEstacionamento).id);
 				}
 				buscarEstacionamentos();
 				break;
@@ -127,6 +137,18 @@ export const Dashboard = () => {
 	const buscarMensalidades = async (id: number) => {
 		const response = await getMensalidadesEstacionamento(id);
 		setMensalidades(response.data);
+	};
+
+	const buscarEntradaSaidaRelatorio = async (
+		id: number,
+		dataInicio: string = new Date(
+			new Date().setMonth(new Date().getMonth() - 2)
+		).toISOString(),
+		dataFim: string = new Date().toISOString()
+	) => {
+		const response = await getEntradaSaidaRelatorio(id, dataInicio, dataFim);
+		setEntradaSaidaRelatorio(response.data);
+		console.log(response.data);
 	};
 
 	const handleEstacionamentoSelecionado = (id: number) => {
@@ -207,10 +229,10 @@ export const Dashboard = () => {
 						}
 					>
 						<TabsList
-							className={`grid w-full ${
+							className={`grid w-full h-auto ${
 								verificarAdministradorOuGerente()
 									? estacionamentoSelecionado.valor_mensalidade
-										? "grid-cols-3"
+										? "cellphone:grid-cols-2 cellphone:grid-rows-2 tablet:grid-cols-4 tablet:grid-rows-1"
 										: "grid-cols-2"
 									: estacionamentoSelecionado.valor_mensalidade
 									? "grid-cols-2"
@@ -228,6 +250,11 @@ export const Dashboard = () => {
 							{estacionamentoSelecionado.valor_mensalidade && (
 								<TabsTrigger accessKey="mensalidades" value="mensalidades">
 									Mensalidades
+								</TabsTrigger>
+							)}
+							{verificarAdministradorOuGerente() && (
+								<TabsTrigger accessKey="relatorio" value="relatorio">
+									Relatórios
 								</TabsTrigger>
 							)}
 						</TabsList>
@@ -255,6 +282,13 @@ export const Dashboard = () => {
 								onBuscarMensalidades={() => {
 									buscarMensalidades(estacionamentoSelecionado.id);
 								}}
+							/>
+						</TabsContent>
+						<TabsContent value="relatorio">
+							<Relatorios
+								entradaSaidaRelatorio={entradaSaidaRelatorio}
+								estacionamentoId={estacionamentoSelecionado.id}
+								onBuscarRelatorio={buscarEntradaSaidaRelatorio}
 							/>
 						</TabsContent>
 					</Tabs>

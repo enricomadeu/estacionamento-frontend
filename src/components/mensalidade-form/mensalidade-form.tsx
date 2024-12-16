@@ -99,7 +99,7 @@ export const MensalidadeForm = (props: MensalidadeFormProps) => {
 						<Input
 							id="valor"
 							type="text"
-							value={estacionamento.valor_mensalidade.toLocaleString("pt-BR", {
+							value={estacionamento.valor_mensalidade?.toLocaleString("pt-BR", {
 								style: "currency",
 								currency: "BRL",
 							})}

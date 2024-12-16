@@ -126,7 +126,7 @@ export const Dashboard = () => {
 	const buscarMensalidades = async (id: number) => {
 		const response = await getMensalidadesEstacionamento(id);
 		setMensalidades(response.data);
-		console.log(mensalidades);
+		console.log(response.data);
 	};
 
 	const handleEstacionamentoSelecionado = (id: number) => {
@@ -184,7 +184,10 @@ export const Dashboard = () => {
 						<Button
 							variant="outline"
 							size="icon"
-							onClick={() => setEstacionamentoSelecionado(undefined)}
+							onClick={() => {
+								localStorage.removeItem("estacionamentoSelecionado");
+								setEstacionamentoSelecionado(undefined)
+							}}
 						>
 							<CaretLeftIcon />
 						</Button>
@@ -195,19 +198,18 @@ export const Dashboard = () => {
 							activeTab?.length > 0
 								? activeTab
 								: verificarAdministradorOuGerente()
-								? "funcionarios"
-								: "historico"
+									? "funcionarios"
+									: "historico"
 						}
 						onClick={(value: BaseSyntheticEvent) =>
 							setActiveTab(value.target.accessKey)
 						}
 					>
 						<TabsList
-							className={`grid w-full ${
-								verificarAdministradorOuGerente()
-									? "grid-cols-3"
-									: "grid-cols-2"
-							}`}
+							className={`grid w-full ${verificarAdministradorOuGerente()
+								? estacionamentoSelecionado.valor_mensalidade ? "grid-cols-3" : "grid-cols-2"
+								: estacionamentoSelecionado.valor_mensalidade ? "grid-cols-2" : "grid-cols-1"
+								}`}
 						>
 							{verificarAdministradorOuGerente() && (
 								<TabsTrigger accessKey="funcionarios" value="funcionarios">
@@ -217,9 +219,12 @@ export const Dashboard = () => {
 							<TabsTrigger accessKey="historico" value="historico">
 								Histórico
 							</TabsTrigger>
-							<TabsTrigger accessKey="mensalidades" value="mensalidades">
-								Mensalidades
-							</TabsTrigger>
+							{estacionamentoSelecionado.valor_mensalidade && (
+								<TabsTrigger accessKey="mensalidades" value="mensalidades">
+									Mensalidades
+								</TabsTrigger>
+							)}
+
 						</TabsList>
 						<TabsContent value="funcionarios">
 							<FuncionariosListagem

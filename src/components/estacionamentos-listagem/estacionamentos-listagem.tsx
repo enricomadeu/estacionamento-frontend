@@ -44,6 +44,9 @@ export const EstacionamentosListagem = (
 					<TableHead className="cellphone:hidden tablet:table-cell">
 						Valor Hora
 					</TableHead>
+					<TableHead className="cellphone:hidden tablet:table-cell">
+						Valor Mensal
+					</TableHead>
 					<TableHead>Editar</TableHead>
 					<TableHead></TableHead>
 				</TableRow>
@@ -67,6 +70,12 @@ export const EstacionamentosListagem = (
 								style: "currency",
 								currency: "BRL",
 							})}
+						</TableCell>
+						<TableCell className="cellphone:hidden tablet:table-cell">
+							{estacionamento.valor_mensalidade ? estacionamento.valor_mensalidade.toLocaleString("pt-BR", {
+								style: "currency",
+								currency: "BRL",
+							}) : "-"}
 						</TableCell>
 						<TableCell>
 							<EstacionamentoForm

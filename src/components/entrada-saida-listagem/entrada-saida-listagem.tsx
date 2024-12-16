@@ -67,16 +67,16 @@ export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
 						<TableCell>
 							{entradaSaida.valor_pago
 								? entradaSaida.valor_pago.toLocaleString("pt-BR", {
-										style: "currency",
-										currency: "BRL",
-								  })
+									style: "currency",
+									currency: "BRL",
+								})
 								: calculaPagamento(
-										new Date(entradaSaida.data_entrada),
-										entradaSaida.estacionamento.valor_hora
-								  ).toLocaleString("pt-BR", {
-										style: "currency",
-										currency: "BRL",
-								  })}
+									new Date(entradaSaida.data_entrada),
+									entradaSaida.estacionamento.valor_hora
+								).toLocaleString("pt-BR", {
+									style: "currency",
+									currency: "BRL",
+								})}
 						</TableCell>
 						<TableCell>{entradaSaida.pago ? "Sim" : "Não"}</TableCell>
 						<TableCell>
@@ -86,9 +86,9 @@ export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
 									entradaSaida.valor_pago
 										? entradaSaida.valor_pago
 										: calculaPagamento(
-												new Date(entradaSaida.data_entrada),
-												entradaSaida.estacionamento.valor_hora
-										  )
+											new Date(entradaSaida.data_entrada),
+											entradaSaida.estacionamento.valor_hora
+										)
 								}
 								buscarEntradasSaidas={onBuscarEntradasSaidas}
 							/>

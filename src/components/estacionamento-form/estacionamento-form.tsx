@@ -37,6 +37,7 @@ export const EstacionamentoForm = (props: EstacionamentoFormProps) => {
 			telefone: props.estacionamento?.telefone ?? "",
 			vagas: props.estacionamento?.vagas ?? 10,
 			valor_hora: props.estacionamento?.valor_hora ?? 10,
+			valor_mensalidade: props.estacionamento?.valor_mensalidade
 		});
 	const { onBuscarEstacionamentos } = props;
 
@@ -113,9 +114,9 @@ export const EstacionamentoForm = (props: EstacionamentoFormProps) => {
 						/>
 					</div>
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label htmlFor="nome">Endereço</Label>
+						<Label htmlFor="endereco">Endereço</Label>
 						<Input
-							id="nome"
+							id="endereco"
 							type="text"
 							placeholder="Digite o endereço"
 							value={estacionamento.endereco}
@@ -129,9 +130,9 @@ export const EstacionamentoForm = (props: EstacionamentoFormProps) => {
 						/>
 					</div>
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label htmlFor="nome">Telefone</Label>
+						<Label htmlFor="telefone">Telefone</Label>
 						<Input
-							id="nome"
+							id="telefone"
 							type="text"
 							placeholder="Digite o telefone"
 							value={estacionamento.telefone}
@@ -145,9 +146,9 @@ export const EstacionamentoForm = (props: EstacionamentoFormProps) => {
 						/>
 					</div>
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label htmlFor="nome">Vagas</Label>
+						<Label htmlFor="vagas">Vagas</Label>
 						<Input
-							id="nome"
+							id="vagas"
 							type="number"
 							placeholder="Número de vagas"
 							value={estacionamento.vagas}
@@ -161,13 +162,13 @@ export const EstacionamentoForm = (props: EstacionamentoFormProps) => {
 						/>
 					</div>
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label htmlFor="nome">Valor hora</Label>
+						<Label htmlFor="valor_hora">Valor hora</Label>
 						<div className="relative">
 							<span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-50">
 								R$
 							</span>
 							<Input
-								id="nome"
+								id="valor_hora"
 								type="number"
 								placeholder="Valor por hora"
 								className="pl-10"
@@ -176,6 +177,28 @@ export const EstacionamentoForm = (props: EstacionamentoFormProps) => {
 									setEstacionamento({
 										...estacionamento,
 										valor_hora: +value.target.value,
+									})
+								}
+								readOnly={funcionario?.cargo.id === CargoEnum.Atendente}
+							/>
+						</div>
+					</div>
+					<div className="grid grid-cols-2 items-center gap-4">
+						<Label htmlFor="valor_mensal">Valor mensal</Label>
+						<div className="relative">
+							<span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-50">
+								R$
+							</span>
+							<Input
+								id="valor_mensal"
+								type="number"
+								placeholder="Valor mensal"
+								className="pl-10"
+								value={estacionamento.valor_mensalidade}
+								onChange={(value) =>
+									setEstacionamento({
+										...estacionamento,
+										valor_mensalidade: +value.target.value,
 									})
 								}
 								readOnly={funcionario?.cargo.id === CargoEnum.Atendente}

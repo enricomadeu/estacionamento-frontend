@@ -82,7 +82,7 @@ export const Relatorios = (props: RelatoriosProps) => {
 										format(date.from, "MMM dd, y", { locale: ptBR })
 									)
 								) : (
-									<span>Pick a date</span>
+									<span>Selecione uma data</span>
 								)}
 							</Button>
 						</PopoverTrigger>
@@ -101,7 +101,14 @@ export const Relatorios = (props: RelatoriosProps) => {
 				</div>
 				<Button onClick={onAplicar}>Aplicar</Button>
 			</div>
-			{entradaSaidaRelatorio.length > 0 ? (
+			{entradaSaidaRelatorio.length === 0 ||
+			entradaSaidaRelatorio.every(
+				(e) => e.totalArrecadado === 0 && e.veiculosEstacionados === 0
+			) ? (
+				<div className="mt-4 text-sm text-muted-foreground text-center">
+					Nenhum registro encontrado para o período selecionado
+				</div>
+			) : (
 				<ChartContainer config={chartConfig} className="w-full min-h-[200px]">
 					<BarChart accessibilityLayer data={entradaSaidaRelatorio}>
 						<CartesianGrid vertical={false} />
@@ -125,10 +132,6 @@ export const Relatorios = (props: RelatoriosProps) => {
 						></Bar>
 					</BarChart>
 				</ChartContainer>
-			) : (
-				<div className="mt-4 text-sm text-muted-foreground text-center">
-					Nenhum registro encontrado para o período selecionado
-				</div>
 			)}
 		</div>
 	);

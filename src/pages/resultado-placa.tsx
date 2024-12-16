@@ -5,6 +5,10 @@ import { EntradaSaidaListagem } from "@/components/entrada-saida-listagem/entrad
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CaretLeftIcon } from "@radix-ui/react-icons";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MensalidadeResponse } from "@/api/mensalidade/responses/mensalidade.response";
+import { getMensalidadesPlaca } from "@/api/mensalidade/mensalidade.service";
+import { MensalidadeListagem } from "@/components/mensalidade-listagem/mensalidade-listagem";
 
 export const ResultadoPlaca = () => {
 	const navigate = useNavigate();
@@ -14,16 +18,24 @@ export const ResultadoPlaca = () => {
 	const [entradasSaidas, setEntradasSaidas] = useState<EntradaSaidaResponse[]>(
 		[]
 	);
+	const [mensalidades, setMensalidades] = useState<MensalidadeResponse[]>([]);
 
 	useEffect(() => {
 		if (placa) {
 			buscarEntradasSaidas();
+			buscarMensalidades();
 		}
 	}, [placa]);
 
 	const buscarEntradasSaidas = async () => {
 		const response = await getEntradasSaidasPlaca(placa!);
 		setEntradasSaidas(response.data);
+	};
+
+	const buscarMensalidades = async () => {
+		const response = await getMensalidadesPlaca(placa!);
+		setMensalidades(response.data);
+		console.log(response.data)
 	};
 
 	const onRetornaHome = () => {
@@ -40,12 +52,26 @@ export const ResultadoPlaca = () => {
 				<Button variant="outline" size="icon" onClick={onRetornaHome}>
 					<CaretLeftIcon />
 				</Button>
-				<div className="flex-col space-y-4 w-full">
-					<EntradaSaidaListagem
-						entradasSaidas={entradasSaidas}
-						onBuscarEntradasSaidas={buscarEntradasSaidas}
-					/>
-				</div>
+				<Tabs className="w-full" defaultValue="historico">
+					<TabsList className="grid w-full grid-cols-2">
+						<TabsTrigger accessKey="historico" value="historico">
+							Histórico
+						</TabsTrigger>
+						<TabsTrigger value="mensalidades">Mensalidades</TabsTrigger>
+					</TabsList>
+					<TabsContent accessKey="mensalidades" value="historico">
+						<EntradaSaidaListagem
+							entradasSaidas={entradasSaidas}
+							onBuscarEntradasSaidas={buscarEntradasSaidas}
+						/>
+					</TabsContent>
+					<TabsContent value="mensalidades">
+						<MensalidadeListagem
+							mensalidades={mensalidades}
+							onBuscarMensalidades={buscarMensalidades}
+						/>
+					</TabsContent>
+				</Tabs>
 			</div>
 		</div>
 	);

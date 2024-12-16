@@ -22,6 +22,7 @@ import { getEntradasSaidasEstacionamentos } from "@/api/entradaSaida/entradaSaid
 import { getMensalidadesEstacionamento } from "@/api/mensalidade/mensalidade.service";
 import { MensalidadeResponse } from "@/api/mensalidade/responses/mensalidade.response";
 import { MensalidadeForm } from "@/components/mensalidade-form/mensalidade-form";
+import { MensalidadeListagem } from "@/components/mensalidade-listagem/mensalidade-listagem";
 
 export const Dashboard = () => {
 	const { funcionario } = useAuth();
@@ -126,13 +127,13 @@ export const Dashboard = () => {
 	const buscarMensalidades = async (id: number) => {
 		const response = await getMensalidadesEstacionamento(id);
 		setMensalidades(response.data);
-		console.log(mensalidades);
 	};
 
 	const handleEstacionamentoSelecionado = (id: number) => {
 		setEstacionamentoSelecionado(estacionamentos.find((e) => e.id === id));
 		buscarFuncionarios(id);
 		buscarEntradasSaidas(id);
+		buscarMensalidades(id);
 	};
 
 	const verificarAdministradorOuGerente = () => {
@@ -186,7 +187,7 @@ export const Dashboard = () => {
 							size="icon"
 							onClick={() => {
 								localStorage.removeItem("estacionamentoSelecionado");
-								setEstacionamentoSelecionado(undefined)
+								setEstacionamentoSelecionado(undefined);
 							}}
 						>
 							<CaretLeftIcon />
@@ -198,18 +199,23 @@ export const Dashboard = () => {
 							activeTab?.length > 0
 								? activeTab
 								: verificarAdministradorOuGerente()
-									? "funcionarios"
-									: "historico"
+								? "funcionarios"
+								: "historico"
 						}
 						onClick={(value: BaseSyntheticEvent) =>
 							setActiveTab(value.target.accessKey)
 						}
 					>
 						<TabsList
-							className={`grid w-full ${verificarAdministradorOuGerente()
-								? estacionamentoSelecionado.valor_mensalidade ? "grid-cols-3" : "grid-cols-2"
-								: estacionamentoSelecionado.valor_mensalidade ? "grid-cols-2" : "grid-cols-1"
-								}`}
+							className={`grid w-full ${
+								verificarAdministradorOuGerente()
+									? estacionamentoSelecionado.valor_mensalidade
+										? "grid-cols-3"
+										: "grid-cols-2"
+									: estacionamentoSelecionado.valor_mensalidade
+									? "grid-cols-2"
+									: "grid-cols-1"
+							}`}
 						>
 							{verificarAdministradorOuGerente() && (
 								<TabsTrigger accessKey="funcionarios" value="funcionarios">
@@ -224,7 +230,6 @@ export const Dashboard = () => {
 									Mensalidades
 								</TabsTrigger>
 							)}
-
 						</TabsList>
 						<TabsContent value="funcionarios">
 							<FuncionariosListagem
@@ -242,6 +247,14 @@ export const Dashboard = () => {
 								onBuscarEntradasSaidas={() =>
 									buscarEntradasSaidas(estacionamentoSelecionado.id)
 								}
+							/>
+						</TabsContent>
+						<TabsContent value="mensalidades">
+							<MensalidadeListagem
+								mensalidades={mensalidades}
+								onBuscarMensalidades={() => {
+									buscarMensalidades(estacionamentoSelecionado.id);
+								}}
 							/>
 						</TabsContent>
 					</Tabs>

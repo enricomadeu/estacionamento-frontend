@@ -18,6 +18,7 @@ import { loginFuncionario } from "@/api/funcionario/funcionario.service";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/AuthContext";
 import { getEntradasSaidasPlaca } from "@/api/entradaSaida/entradaSaida.service";
+import { getMensalidadesPlaca } from "@/api/mensalidade/mensalidade.service";
 
 export const Home = () => {
 	const [placa, setPlaca] = useState("");
@@ -31,13 +32,16 @@ export const Home = () => {
 		if (localStorage.getItem("funcionario")) {
 			navigate("/dashboard");
 		}
-	}, []);
+	}, [navigate]);
 
 	const onPlateSubmit = async () => {
 		setLoading(true);
 		try {
-			await getEntradasSaidasPlaca(placa);
-			toast.success("Login realizado com sucesso!", {
+			await Promise.allSettled([
+				getEntradasSaidasPlaca(placa),
+				getMensalidadesPlaca(placa),
+			]);
+			toast.success("Placa localizada com sucesso!", {
 				className: "bg-green-600 text-white",
 			});
 			navigate(`/placa?placa=${placa}`);
@@ -91,7 +95,11 @@ export const Home = () => {
 									id="placa"
 									type="text"
 									value={placa}
-									onChange={(e) => setPlaca(e.target.value)}
+									onChange={(e) =>
+										setPlaca(
+											e.target.value.toUpperCase().replace(/[^a-zA-Z0-9]/g, "")
+										)
+									}
 									placeholder="Digite a placa"
 								/>
 							</div>

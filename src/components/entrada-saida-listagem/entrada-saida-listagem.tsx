@@ -65,30 +65,24 @@ export const EntradaSaidaListagem = (props: EntradaSaidaListagemProps) => {
 								: "-"}
 						</TableCell>
 						<TableCell>
-							{entradaSaida.valor_pago
-								? entradaSaida.valor_pago.toLocaleString("pt-BR", {
-									style: "currency",
-									currency: "BRL",
-								})
-								: calculaPagamento(
-									new Date(entradaSaida.data_entrada),
-									entradaSaida.estacionamento.valor_hora
-								).toLocaleString("pt-BR", {
-									style: "currency",
-									currency: "BRL",
-								})}
+							{entradaSaida.valor_a_pagar
+								? entradaSaida.valor_a_pagar.toLocaleString("pt-BR", {
+										style: "currency",
+										currency: "BRL",
+								  })
+								: "-"}
 						</TableCell>
 						<TableCell>{entradaSaida.pago ? "Sim" : "Não"}</TableCell>
 						<TableCell>
 							<EntradaSaidaForm
 								entradaSaida={entradaSaida}
 								valor={
-									entradaSaida.valor_pago
-										? entradaSaida.valor_pago
+									entradaSaida.valor_a_pagar
+										? entradaSaida.valor_a_pagar
 										: calculaPagamento(
-											new Date(entradaSaida.data_entrada),
-											entradaSaida.estacionamento.valor_hora
-										)
+												new Date(entradaSaida.data_entrada),
+												entradaSaida.estacionamento.valor_hora
+										  )
 								}
 								buscarEntradasSaidas={onBuscarEntradasSaidas}
 							/>

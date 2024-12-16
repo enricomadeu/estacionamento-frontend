@@ -16,17 +16,21 @@ import { toast } from "sonner";
 import { CreateMensalidadeRequest } from "@/api/mensalidade/requests/createMensalidade.request";
 import { EstacionamentoResponse } from "@/api/estacionamento/responses/estacionamento.response";
 import { createMensalidade } from "@/api/mensalidade/mensalidade.service";
+import { MensalidadeResponse } from "@/api/mensalidade/responses/mensalidade.response";
+import { format } from "date-fns";
+import { DotsVerticalIcon } from "@radix-ui/react-icons";
 
 interface MensalidadeFormProps {
+	mensalidade?: MensalidadeResponse;
 	estacionamento: EstacionamentoResponse;
 	onBuscarMensalidades: (id: number) => void;
 }
 
 export const MensalidadeForm = (props: MensalidadeFormProps) => {
-	const { estacionamento, onBuscarMensalidades } = props;
+	const { estacionamento, mensalidade, onBuscarMensalidades } = props;
 	const [novaMensalidade, setNovaMensalidade] =
 		useState<CreateMensalidadeRequest>({
-			placa: "",
+			placa: mensalidade?.placa ?? "",
 			estacionamento: estacionamento.id,
 		});
 
@@ -54,7 +58,13 @@ export const MensalidadeForm = (props: MensalidadeFormProps) => {
 	return (
 		<Sheet>
 			<SheetTrigger asChild>
-				<Button>Nova Mensalidade</Button>
+				{mensalidade ? (
+					<Button variant="outline" size="icon">
+						<DotsVerticalIcon />
+					</Button>
+				) : (
+					<Button>Nova Mensalidade</Button>
+				)}
 			</SheetTrigger>
 			<SheetContent className="tablet:w-[540px] cellphone:w-full">
 				<SheetHeader>
@@ -65,7 +75,7 @@ export const MensalidadeForm = (props: MensalidadeFormProps) => {
 				</SheetHeader>
 				<div className="grid gap-4 py-4">
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label>Placa</Label>
+						<Label htmlFor="placa">Placa</Label>
 						<Input
 							id="placa"
 							type="text"
@@ -79,12 +89,13 @@ export const MensalidadeForm = (props: MensalidadeFormProps) => {
 										.replace(/[^a-zA-Z0-9]/g, ""),
 								});
 							}}
+							readOnly={mensalidade ? true : false}
 						/>
 					</div>
 				</div>
 				<div className="grid gap-4 py-4">
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label>Estacionamento</Label>
+						<Label htmlFor="estacionamento">Estacionamento</Label>
 						<Input
 							id="estacionamento"
 							type="text"
@@ -95,7 +106,41 @@ export const MensalidadeForm = (props: MensalidadeFormProps) => {
 				</div>
 				<div className="grid gap-4 py-4">
 					<div className="grid grid-cols-2 items-center gap-4">
-						<Label>Valor</Label>
+						<Label htmlFor="data_pagamento">Data pagamento</Label>
+						<Input
+							id="data_pagamento"
+							type="text"
+							value={format(
+								mensalidade?.data_pagamento ?? new Date(),
+								"dd/MM/yyyy"
+							)}
+							readOnly
+						/>
+					</div>
+				</div>
+				{mensalidade && (
+					<div className="grid gap-4 py-4">
+						<div className="grid grid-cols-2 items-center gap-4">
+							<Label htmlFor="data_vencimento">Data vencimento</Label>
+							<Input
+								id="data_vencimento"
+								type="text"
+								value={format(
+									new Date(
+										new Date(mensalidade.data_pagamento).setMonth(
+											new Date(mensalidade.data_pagamento).getMonth() + 1
+										)
+									),
+									"dd/MM/yyyy"
+								)}
+								readOnly
+							/>
+						</div>
+					</div>
+				)}
+				<div className="grid gap-4 py-4">
+					<div className="grid grid-cols-2 items-center gap-4">
+						<Label htmlFor="valor">Valor</Label>
 						<Input
 							id="valor"
 							type="text"
@@ -109,13 +154,15 @@ export const MensalidadeForm = (props: MensalidadeFormProps) => {
 				</div>
 				<SheetFooter>
 					<SheetClose asChild>
-						<Button
-							className="w-[30%] ms-auto"
-							type="submit"
-							onClick={onHandleSubmit}
-						>
-							Registrar
-						</Button>
+						{!mensalidade && (
+							<Button
+								className="w-[30%] ms-auto"
+								type="submit"
+								onClick={onHandleSubmit}
+							>
+								Registrar
+							</Button>
+						)}
 					</SheetClose>
 				</SheetFooter>
 			</SheetContent>

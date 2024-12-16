@@ -6,7 +6,7 @@ export class EntradaSaidaResponse {
 	estacionamento: EstacionamentoResponse;
 	data_entrada: Date;
 	data_saida?: Date;
-	valor_pago?: number;
+	valor_a_pagar?: number;
 	pago: boolean;
 
 	constructor(params: EntradaSaidaResponse) {
@@ -15,7 +15,7 @@ export class EntradaSaidaResponse {
 		this.estacionamento = params.estacionamento;
 		this.data_entrada = params.data_entrada;
 		this.data_saida = params.data_saida;
-		this.valor_pago = params.valor_pago;
+		this.valor_a_pagar = params.valor_a_pagar;
 		this.pago = params.pago;
 	}
 }

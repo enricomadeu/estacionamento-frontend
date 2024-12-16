@@ -21,7 +21,7 @@ export const MensalidadeListagem = (props: MensalidadeListagemProps) => {
 
 	return (
 		<Table className="w-full">
-			{!mensalidades && (
+			{mensalidades.length === 0 && (
 				<TableCaption>
 					Nenhuma mensalidade cadastrada neste estacionamento
 				</TableCaption>

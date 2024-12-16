@@ -101,29 +101,35 @@ export const Relatorios = (props: RelatoriosProps) => {
 				</div>
 				<Button onClick={onAplicar}>Aplicar</Button>
 			</div>
-			<ChartContainer config={chartConfig} className="w-full min-h-[200px]">
-				<BarChart accessibilityLayer data={entradaSaidaRelatorio}>
-					<CartesianGrid vertical={false} />
-					<XAxis
-						dataKey="mes"
-						tickLine={false}
-						tickMargin={10}
-						axisLine={false}
-					/>
-					<ChartTooltip content={<ChartTooltipContent />} />
-					<ChartLegend content={<ChartLegendContent />} />
-					<Bar
-						dataKey={"totalArrecadado"}
-						fill="var(--color-totalArrecadado)"
-						radius={4}
-					></Bar>
-					<Bar
-						dataKey="veiculosEstacionados"
-						fill="var(--color-veiculosEstacionados)"
-						radius={4}
-					></Bar>
-				</BarChart>
-			</ChartContainer>
+			{entradaSaidaRelatorio.length > 0 ? (
+				<ChartContainer config={chartConfig} className="w-full min-h-[200px]">
+					<BarChart accessibilityLayer data={entradaSaidaRelatorio}>
+						<CartesianGrid vertical={false} />
+						<XAxis
+							dataKey="mes"
+							tickLine={false}
+							tickMargin={10}
+							axisLine={false}
+						/>
+						<ChartTooltip content={<ChartTooltipContent />} />
+						<ChartLegend content={<ChartLegendContent />} />
+						<Bar
+							dataKey={"totalArrecadado"}
+							fill="var(--color-totalArrecadado)"
+							radius={4}
+						></Bar>
+						<Bar
+							dataKey="veiculosEstacionados"
+							fill="var(--color-veiculosEstacionados)"
+							radius={4}
+						></Bar>
+					</BarChart>
+				</ChartContainer>
+			) : (
+				<div className="mt-4 text-sm text-muted-foreground text-center">
+					Nenhum registro encontrado para o período selecionado
+				</div>
+			)}
 		</div>
 	);
 };

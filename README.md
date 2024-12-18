@@ -28,7 +28,7 @@ O Estacionamento Frontend é responsável por fornecer uma interface amigável p
 - [x] Interface para registro de saída de veículos
 - [x] Exibição de tarifas calculadas
 - [x] Monitoramento em tempo real de vagas disponíveis
-- [ ] Geração de relatórios (em desenvolvimento)
+- [x] Geração de relatórios (em desenvolvimento)
 
 ## Tecnologias Utilizadas
 

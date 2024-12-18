@@ -10,8 +10,6 @@
 4. [Pré-requisitos](#pré-requisitos)
 5. [Instalação](#instalação)
 6. [Uso](#uso)
-7. [Contribuindo](#contribuindo)
-8. [Licença](#licença)
 
 ## Visão Geral
 
@@ -87,11 +85,3 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 2. O frontend estará disponível em `http://localhost:5173`.
 
 3. Certifique-se de que o [backend](https://github.com/enricomadeu/estacionamento-backend) esteja em execução para que o frontend possa se comunicar corretamente com a API.
-
-## Contribuindo
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e enviar pull requests. Para maiores detalhes, veja [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Licença
-
-Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.

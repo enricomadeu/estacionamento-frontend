@@ -1,50 +1,97 @@
-# React + TypeScript + Vite
+# Estacionamento Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Descrição breve**: Este projeto é o frontend para um sistema de gerenciamento de estacionamento, fornecendo uma interface de usuário para operações como entrada e saída de veículos, visualização de tarifas e disponibilidade de vagas.
 
-Currently, two official plugins are available:
+## Índice
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. [Visão Geral](#visão-geral)
+2. [Funcionalidades](#funcionalidades)
+3. [Tecnologias Utilizadas](#tecnologias-utilizadas)
+4. [Pré-requisitos](#pré-requisitos)
+5. [Instalação](#instalação)
+6. [Uso](#uso)
+7. [Contribuindo](#contribuindo)
+8. [Licença](#licença)
 
-## Expanding the ESLint configuration
+## Visão Geral
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+O Estacionamento Frontend é responsável por fornecer uma interface amigável para os usuários interagirem com o sistema de gerenciamento de estacionamento. Ele permite:
 
-- Configure the top-level `parserOptions` property like this:
+- Registro de entrada e saída de veículos
+- Visualização de tarifas com base no tempo de permanência
+- Monitoramento da disponibilidade de vagas
+- Acesso a relatórios operacionais
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Funcionalidades
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- [x] Interface para registro de entrada de veículos
+- [x] Interface para registro de saída de veículos
+- [x] Exibição de tarifas calculadas
+- [x] Monitoramento em tempo real de vagas disponíveis
+- [ ] Geração de relatórios (em desenvolvimento)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Tecnologias Utilizadas
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Linguagem**: TypeScript
+- **Framework**: React.js
+- **Ferramenta de Build**: Vite
+- **Estilização**: Tailwind CSS
+
+## Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado em sua máquina:
+
+- [Node.js](https://nodejs.org/) (versão 14 ou superior)
+- [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
+
+## Instalação
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/enricomadeu/estacionamento-frontend.git
+   ```
+
+2. Acesse o diretório do projeto:
+
+   ```bash
+   cd estacionamento-frontend
+   ```
+
+3. Instale as dependências:
+
+   ```bash
+   npm install
+   ```
+
+   ou
+
+   ```bash
+   yarn install
+   ```
+
+## Uso
+
+1. Inicie o servidor de desenvolvimento:
+
+   ```bash
+   npm run dev
+   ```
+
+   ou
+
+   ```bash
+   yarn dev
+   ```
+
+2. O frontend estará disponível em `http://localhost:5173`.
+
+3. Certifique-se de que o [backend](https://github.com/enricomadeu/estacionamento-backend) esteja em execução para que o frontend possa se comunicar corretamente com a API.
+
+## Contribuindo
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e enviar pull requests. Para maiores detalhes, veja [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Licença
+
+Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
